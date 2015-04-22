@@ -1,4 +1,4 @@
-#include <LiquidCrystal_I2C.h>
+#include "LiquidCrystal_I2C.h"
 
 // When the display powers up, it is configured as follows:
 //
@@ -34,10 +34,19 @@ LiquidCrystal_I2C::LiquidCrystal_I2C(uint8_t lcd_Addr,uint8_t lcd_cols,uint8_t l
   _screencounter = 0;
   
   // init buffers
-  write_buffer("                    ", 0);
+  /*write_buffer("                    ", 0);
   write_buffer("                    ", 1);
   write_buffer("                    ", 2);
   write_buffer("                    ", 3);
+  
+  write_screen(-1);//TODO init _screen and _buffer
+  */
+  for (int r = 0; r < _rows; r++){
+    for (int c = 0; c < _cols; c++){
+      _buffer[r][c] = 0;
+      _screen[r][c] = 0;
+    }
+  }
 }
 
 void LiquidCrystal_I2C::init(){
@@ -67,7 +76,7 @@ void LiquidCrystal_I2C::begin(uint8_t cols, uint8_t lines, uint8_t dotsize) {
 	delay(500); 
   
 	// Now we pull both RS and R/W low to begin commands
-	expanderWrite(_backlightval);	// reset expanderand turn backlight off (Bit 8 =1)
+	expanderWrite(_backlightval);	// reset expander and turn backlight off (Bit 8 =1)
 	delay(1000);
 
 	// put the LCD into 4 bit mode
@@ -88,7 +97,6 @@ void LiquidCrystal_I2C::begin(uint8_t cols, uint8_t lines, uint8_t dotsize) {
    
   // finally, set to 4-bit interface
   write4bits(0x02 << 4); 
-
 
 	// set # lines, font size, etc.
 	command(LCD_FUNCTIONSET | _displayfunction);  
@@ -331,7 +339,6 @@ void LiquidCrystal_I2C::write_screen(uint8_t n){
       // update screen array
       _screen[r][c] = _buffer[r][c];
       
-      _screencounter++;
       n--;
       
       // return when amount of characters is written
@@ -339,9 +346,7 @@ void LiquidCrystal_I2C::write_screen(uint8_t n){
         return;
       }
     }
-    else{
-      _screencounter++;
-    }
+    _screencounter++;
   }
 }
 

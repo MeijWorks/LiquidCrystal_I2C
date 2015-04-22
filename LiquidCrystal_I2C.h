@@ -79,7 +79,7 @@ public:
   void noAutoscroll(); 
   void createChar(uint8_t, uint8_t[]);
   void setCursor(uint8_t, uint8_t); 
-#if defined(ARDUINO) && ARDUINO >= 100
+
   inline size_t write(uint8_t value) {
     write_buffer(char(value), _cursor_row, _cursor_col);
     _cursor_col++;
@@ -93,11 +93,11 @@ public:
     //send(value, Rs);
     return 0;
   }
-#else
-  inline void write(uint8_t value) {
+  
+  inline void write_direct(uint8_t value) {
     send(value, Rs);
   }
-#endif
+
   void command(uint8_t);
   void init();
 
